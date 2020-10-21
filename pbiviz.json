@@ -1,0 +1,20 @@
+{
+  "visual": {
+    "name": "paraTimeline2.0.0",
+    "displayName": "paraTimeline 2.0.0",
+    "guid": "paraDateline9C512AAFFAD845FD99CC8BFC8EFF3952",
+    "visualClassName": "paraTimeline",
+    "version": "2.0.0",
+    "description": "paraTimeline",
+    "supportUrl": "smith11041104@gmail.com",
+    "gitHubUrl": ""
+  },
+  "author": {
+    "name": "Dmitry Vann",
+    "email": "smith11041104@gmail.com"
+  },
+  "assets": {
+    "icon": "assets/icon.png"
+  },
+  "capabilities": "capabilities.json"
+}
