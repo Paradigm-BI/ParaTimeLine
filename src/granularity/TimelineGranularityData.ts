@@ -24,7 +24,7 @@
  *  THE SOFTWARE.
  */
 
-import powerbi from "powerbi-visuals-api";
+import powerbiVisualsApi from "powerbi-visuals-api";
 import { manipulation as svgManipulation } from "powerbi-visuals-utils-svgutils";
 
 import { DayGranularity } from "./dayGranularity";
@@ -44,8 +44,8 @@ export class TimelineGranularityData {
      * Returns the date of the previos day
      * @param date The following date
      */
-    public static previousDay(date: Date): Date {
-        const prevDay: Date = Utils.resetTime(date);
+    public static PREVIOUSDAY(date: Date): Date {
+        const prevDay: Date = Utils.RESETTIME(date);
 
         prevDay.setDate(prevDay.getDate() - TimelineGranularityData.DayOffset);
 
@@ -56,8 +56,8 @@ export class TimelineGranularityData {
      * Returns the date of the next day
      * @param date The previous date
      */
-    public static nextDay(date: Date): Date {
-        const nextDay: Date = Utils.resetTime(date);
+    public static NEXTDAY(date: Date): Date {
+        const nextDay: Date = Utils.RESETTIME(date);
 
         nextDay.setDate(nextDay.getDate() + TimelineGranularityData.DayOffset);
 
@@ -78,7 +78,7 @@ export class TimelineGranularityData {
 
         const lastDate: Date = this.dates[this.dates.length - 1];
 
-        this.endingDate = TimelineGranularityData.nextDay(lastDate);
+        this.endingDate = TimelineGranularityData.NEXTDAY(lastDate);
     }
 
     /**
@@ -128,7 +128,7 @@ export class TimelineGranularityData {
     public createGranularities(
         calendar: Calendar,
         locale: string,
-        localizationManager: powerbi.extensibility.ILocalizationManager,
+        localizationManager: powerbiVisualsApi.extensibility.ILocalizationManager,
     ): void {
         this.granularities = [];
 
@@ -171,7 +171,7 @@ export class TimelineGranularityData {
 
         while (date <= endDate) {
             this.dates.push(date);
-            date = TimelineGranularityData.nextDay(date);
+            date = TimelineGranularityData.NEXTDAY(date);
         }
     }
 }
