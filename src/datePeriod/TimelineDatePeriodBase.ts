@@ -29,7 +29,7 @@ import { Utils } from "../utils";
 import { ITimelineDatePeriodBase } from "./datePeriod";
 
 export class TimelineDatePeriodBase implements ITimelineDatePeriodBase {
-    public static parse(jsonString: string): TimelineDatePeriodBase {
+    public static PARSE(jsonString: string): TimelineDatePeriodBase {
         let datePeriod: ITimelineJSONDatePeriod;
         let startDate: Date = null;
         let endDate: Date = null;
@@ -41,19 +41,19 @@ export class TimelineDatePeriodBase implements ITimelineDatePeriodBase {
         }
 
         if (datePeriod) {
-            startDate = Utils.parseDateWithoutTimezone(datePeriod.startDate);
-            endDate = Utils.parseDateWithoutTimezone(datePeriod.endDate);
+            startDate = Utils.PARSEDATEWITHOUTTIMEZONE(datePeriod.startDate);
+            endDate = Utils.PARSEDATEWITHOUTTIMEZONE(datePeriod.endDate);
         }
 
-        return TimelineDatePeriodBase.create(startDate, endDate);
+        return TimelineDatePeriodBase.CREATE(startDate, endDate);
     }
 
-    public static create(startDate: Date, endDate: Date): TimelineDatePeriodBase {
+    public static CREATE(startDate: Date, endDate: Date): TimelineDatePeriodBase {
         return new TimelineDatePeriodBase(startDate, endDate);
     }
 
-    public static createEmpty(): TimelineDatePeriodBase {
-        return TimelineDatePeriodBase.create(null, null);
+    public static CREATEEMPTY(): TimelineDatePeriodBase {
+        return TimelineDatePeriodBase.CREATE(null, null);
     }
 
     public startDate: Date = null;
@@ -66,8 +66,8 @@ export class TimelineDatePeriodBase implements ITimelineDatePeriodBase {
 
     public toString(): string {
         const jsonDatePeriod: ITimelineJSONDatePeriod = {
-            endDate: Utils.toStringDateWithoutTimezone(this.endDate),
-            startDate: Utils.toStringDateWithoutTimezone(this.startDate),
+            endDate: Utils.TOSTRINGDATEWITHOUTTIMEZONE(this.endDate),
+            startDate: Utils.TOSTRINGDATEWITHOUTTIMEZONE(this.startDate),
         };
 
         return JSON.stringify(jsonDatePeriod);

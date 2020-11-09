@@ -29,6 +29,8 @@ import {
     Selection,
 } from "d3-selection";
 
+import * as d3 from "d3";
+
 import { valueFormatter } from "powerbi-visuals-utils-formattingutils";
 import { manipulation as svgManipulation } from "powerbi-visuals-utils-svgutils";
 import { pixelConverter } from "powerbi-visuals-utils-typeutils";
@@ -47,12 +49,10 @@ import {
 } from "../dataInterfaces";
 
 export class TimelineGranularityBase implements IGranularity {
-    public static getFiscalYearAdjustment(calendar: Calendar): number {
+    public static GETFISCALYEARADJUSTMENT(calendar: Calendar): number {
         const firstMonthOfYear = calendar.getFirstMonthOfYear();
         const firstDayOfYear = calendar.getFirstDayOfYear();
-        const fiscalYearAdjustment: number = ((firstMonthOfYear === 0 && firstDayOfYear === 1) ? 0 : 1);
-
-        return fiscalYearAdjustment;
+        return ((firstMonthOfYear === 0 && firstDayOfYear === 1) ? 0 : 1);
     }
 
     private static DefaultFraction: number = 1;
@@ -143,7 +143,7 @@ export class TimelineGranularityBase implements IGranularity {
             .attr("width", pixelConverter.toString(this.clickableRectWidth))
             .attr("height", pixelConverter.toString(this.clickableRectHeight))
             .on("click", () => {
-                const event: MouseEvent = require("d3").event as MouseEvent;
+                const event: MouseEvent = (<MouseEvent>require("d3").event);
 
                 event.stopPropagation();
 
@@ -166,11 +166,11 @@ export class TimelineGranularityBase implements IGranularity {
         return granularitySelection;
     }
 
-    public splitDate(date: Date): Array<string | number> {
+    public splitDate(date: Date) {
         return [];
     }
 
-    public splitDateForTitle(date: Date): Array<string | number> {
+    public splitDateForTitle(date: Date) {
         return this.splitDate(date);
     }
 
@@ -217,10 +217,10 @@ export class TimelineGranularityBase implements IGranularity {
     public addDate(date: Date): void {
         const datePeriods: ITimelineDatePeriod[] = this.getDatePeriods();
         const lastDatePeriod: ITimelineDatePeriod = datePeriods[datePeriods.length - 1];
-        const identifierArray: Array<string | number> = this.splitDate(date);
+        const identifierArray = this.splitDate(date);
 
         if (datePeriods.length === 0
-            || !Utils.arraysEqual(lastDatePeriod.identifierArray, identifierArray)) {
+            || !Utils.ARRAYSEQUAL(lastDatePeriod.identifierArray, identifierArray)) {
 
             if (datePeriods.length > 0) {
                 lastDatePeriod.endDate = date;
@@ -277,12 +277,12 @@ export class TimelineGranularityBase implements IGranularity {
         // It's Ok until this year is used to calculate date of first week.
         // So, here is some adjustment was applied.
         const year: number = this.determineYear(date);
-        const fiscalYearAdjustment = TimelineGranularityBase.getFiscalYearAdjustment(this.calendar);
+        const fiscalYearAdjustment = TimelineGranularityBase.GETFISCALYEARADJUSTMENT(this.calendar);
 
         const dateOfFirstWeek: Date = this.calendar.getDateOfFirstWeek(year - fiscalYearAdjustment);
         const dateOfFirstFullWeek: Date = this.calendar.getDateOfFirstFullWeek(year - fiscalYearAdjustment);
         // But number of weeks must be calculated using original date.
-        const weeks: number = Utils.getAmountOfWeeksBetweenDates(dateOfFirstFullWeek, date);
+        const weeks: number = Utils.GETAMOUNTOFWEEKSBETWEENDATES(dateOfFirstFullWeek, date);
 
         if (date >= dateOfFirstFullWeek && dateOfFirstWeek < dateOfFirstFullWeek) {
             return [weeks + 1, year];
@@ -301,11 +301,9 @@ export class TimelineGranularityBase implements IGranularity {
             firstDayOfYear,
         );
 
-        const year = date.getFullYear() + TimelineGranularityBase.getFiscalYearAdjustment(this.calendar) - ((firstDate <= date)
+        return date.getFullYear() + TimelineGranularityBase.GETFISCALYEARADJUSTMENT(this.calendar) - ((firstDate <= date)
             ? TimelineGranularityBase.EmptyYearOffset
             : TimelineGranularityBase.YearOffset);
-
-        return year;
     }
 
     /**
