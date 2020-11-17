@@ -28,6 +28,10 @@ import "../style/visual.less";
 // import "core-js/stable";
 // import "@babel/polyfill";
 
+
+import powerbi from "powerbi-visuals-api";
+import ISelectionManager = powerbi.extensibility.ISelectionManager;
+
 import {
     select as d3Select,
     selectAll as d3SelectAll,
@@ -573,6 +577,8 @@ export class paraTimeline implements powerbiVisualsApi.extensibility.visual.IVis
     private datePickers;
     private timelineSize = 0;
 
+    private selectionManager: ISelectionManager;
+
     //Datepickers declaration
     private startDatePicker;
     private endDatePicker;
@@ -589,6 +595,7 @@ export class paraTimeline implements powerbiVisualsApi.extensibility.visual.IVis
     constructor(options: powerbiVisualsApi.extensibility.visual.VisualConstructorOptions) {
         const element: HTMLElement = options.element;
 
+        this.selectionManager = options.host.createSelectionManager();
         this.host = options.host;
 
         this.initialized = false;
@@ -1613,6 +1620,18 @@ export class paraTimeline implements powerbiVisualsApi.extensibility.visual.IVis
         return yPos;
     }
 
+    public setContextMenu(options) {
+        let dataView = options.dataViews[0], categorical = dataView.categorical;
+        let cat = categorical.categories[0];
+        let identity = this.host.createSelectionIdBuilder().withCategory(cat, 0).createSelectionId();
+        let selectionIdOptions = [{
+            identity: identity,
+            selected: false
+        }];
+        this.rootSelection.data(selectionIdOptions);
+        this.getContextMenu(this.rootSelection, this.selectionManager);
+    }
+
     private render(
         timelineData: ITimelineData,
         timelineSettings: VisualSettings,
@@ -1639,6 +1658,7 @@ export class paraTimeline implements powerbiVisualsApi.extensibility.visual.IVis
         );
 
         this.scrollAutoFocusFunc(this.selectedGranulaPos);
+        this.setContextMenu(options);
     }
 
     private calculateYOffset(index: number): number {
@@ -1779,6 +1799,18 @@ export class paraTimeline implements powerbiVisualsApi.extensibility.visual.IVis
             const x = lastIndex * this.timelineProperties.cellWidth;
             this.drawLine(labelsElement, x, x, y1, y2, "black");
         }
+    }
+
+    private getContextMenu(svg, selection) {
+        svg.on('contextmenu', () => {
+            const mouseEvent: MouseEvent = (<MouseEvent>d3.event);
+            let dataPoint = d3.select(d3.event["currentTarget"]).datum();
+            selection.showContextMenu(dataPoint? dataPoint["identity"] : {}, {
+                x: mouseEvent.clientX,
+                y: mouseEvent.clientY
+            });
+            mouseEvent.preventDefault();
+        }); 
     }
 
     private getLengthOfText(id) {
